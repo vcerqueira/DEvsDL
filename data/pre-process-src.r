@@ -1,3 +1,58 @@
+ts_to_df_noPP <- 
+  function(x) {
+    
+    # frequency
+    FRQ <- frequency(x)
+    # time steps (window to look back)
+    k <- 20 + 1
+    
+    # SPLITTING INTO TRAIN/TEST (70/30)
+    x <- diff(x)
+    x_split <- ts_holdout(x, ratio = .7, frq = FRQ)
+    
+    TRAIN <- x_split$train
+    TEST <- x_split$test
+    
+    # PRE-PROCESSING TRAIN, RETRIEVE PROCESSING INFO
+    # TRAIN_pp <-
+    #   pp_ts_train(tr = TRAIN,
+    #               frq = FRQ,
+    #               h = 1,
+    #               k = k)
+    
+    # PRE-PROCESSING TEST WITH TRAIN INFO
+    # TEST_pp <- 
+    #   pp_ts_test(
+    #     x = TEST,
+    #     lambda = TRAIN_pp$lambda,
+    #     seasonal_factor = TRAIN_pp$seasonal_factor,
+    #     first_diffs = TRAIN_pp$train_adj_xi 
+    #   )
+    
+    DS <-
+      create_datasets(train = TRAIN,
+                      test = TEST,
+                      k = k)
+    
+    DS$train <- DS$train[complete.cases(DS$train),]
+    
+    trainx <- DS$train
+    trvl_IDS <- 1:ceiling((nrow(trainx) * .7))
+    in_train <- trainx[trvl_IDS,]
+    validation <- trainx[-trvl_IDS,]
+    
+    
+    list(train=DS$train, 
+         test=DS$test,
+         in_train = in_train,
+         validation = validation,
+         #TRAIN_pp = TRAIN_pp,
+         #TEST_pp = TEST_pp,
+         TRAIN_RAW = TRAIN,
+         TEST_RAW = TEST)
+  }
+
+
 ts_to_df <- 
   function(x) {
     

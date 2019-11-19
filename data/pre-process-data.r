@@ -5,7 +5,8 @@ source("data/pre-process-src.r")
 library(forecast)
 library(tsensembler)
 
-tsdata_df <- lapply(tsdata, ts_to_df)
+#tsdata_df <- lapply(tsdata, ts_to_df)
+tsdata_df <- lapply(tsdata, ts_to_df_noPP)
 save(tsdata_df, file = "data/tsdata_df.rdata")
 
 for (i in 1:length(tsdata)) {
@@ -14,7 +15,8 @@ for (i in 1:length(tsdata)) {
   
   if (!dir.exists(dir)) dir.create(dir)
   
-  x <- ts_to_df(tsdata[[i]])
+  #x <- ts_to_df(tsdata[[i]])
+  x <- ts_to_df_noPP(tsdata[[i]])
   
   tr <- x$train
   tst <- x$test
